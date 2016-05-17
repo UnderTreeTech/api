@@ -32,7 +32,7 @@ func init() {
 	err = db.Ping()
 	if err != nil {
 		beego.Error("Error on opening database connection: %s", err.Error())
-		// os.Exit(1)
+		os.Exit(1)
 	}
 
 	db.SetMaxIdleConns(50)
