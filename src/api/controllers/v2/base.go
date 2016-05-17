@@ -11,11 +11,20 @@ import (
 //在beego.Controller上的进一步封装，主要进行一些验证
 type BaseController struct {
 	beego.Controller
+	requestParams map[string]string
+}
+
+// Prepare implemented Prepare() method for baseController.
+// It's used for request param valid and check
+func (b *BaseController) Prepare() {
+	b.requestParams = b.params()
+	b.validParam()
+	b.validRequest()
 }
 
 //获取请求的所有参数,以供业务controller使用
+//规定参数不能为空
 func (b *BaseController) params() (params map[string]string) {
-	b.beforeAction()
 	params = make(map[string]string)
 	urlValues := b.Input()
 	for paramKey, _ := range urlValues {
@@ -31,39 +40,23 @@ func (b *BaseController) params() (params map[string]string) {
 
 //校验必须参数
 func (b *BaseController) validParam() {
-	if b.Ctx.Input.Query("requestId") == "" {
-		b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
-	}
+	params := b.Input()
+	requireParams := []string{"requestId", "signature", "timestamp", "appVersion", "platform"}
 
-	if b.Ctx.Input.Query("signature") == "" {
-		b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
+	for _, key := range requireParams {
+		if _, ok := params[key]; !ok {
+			b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
+		}
 	}
-
-	if b.Ctx.Input.Query("timestamp") == "" {
-		b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
-	}
-
-	if b.Ctx.Input.Query("appVersion") == "" {
-		b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
-	}
-
-	if b.Ctx.Input.Query("platform") == "" {
-		b.RespResult(util.PARAM_INVALID_ERRCODE, util.PARAM_INVALID_ERRMSG, nil)
-	}
-}
-
-func (b *BaseController) beforeAction() {
-	b.validParam()
-	b.validRequest()
 }
 
 //校验请求签名是否一致
 func (b *BaseController) validRequest() {
-	platform := b.Ctx.Input.Query("platform")
-	signature := b.Ctx.Input.Query("signature")
-	timestamp := b.Ctx.Input.Query("timestamp")
-	appVersion := b.Ctx.Input.Query("appVersion")
-	requestId := b.Ctx.Input.Query("requestId")
+	platform := b.requestParams["platform"]
+	signature := b.requestParams["signature"]
+	timestamp := b.requestParams["timestamp"]
+	appVersion := b.requestParams["appVersion"]
+	requestId := b.requestParams["requestId"]
 
 	appKey := b.getAppKey(platform, appVersion)
 
@@ -74,7 +67,6 @@ func (b *BaseController) validRequest() {
 	encryptStr := util.SHA1Encrypt(dictStr)
 
 	if encryptStr != signature {
-		beego.Informational("signature:", signature)
 		b.RespResult(util.REQUEST_INVALID_ERRCODE, util.REQUEST_INVALID_ERRMSG, nil)
 	}
 }

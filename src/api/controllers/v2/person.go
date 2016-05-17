@@ -4,7 +4,7 @@ import (
 	// "api/dao"
 	"api/models/v2"
 	"api/util"
-	// "github.com/astaxie/beego"
+	"github.com/astaxie/beego"
 )
 
 type PersonController struct {
@@ -18,13 +18,10 @@ func (p *PersonController) List() {
 }
 
 func (p *PersonController) Get() {
-	requestParams := p.params()
-	userId := requestParams["userId"]
+	beego.Info(p.requestParams)
 
+	userId := p.requestParams["userId"]
 	person := v2.Get(userId)
-
-	//验证redis是否只初始化了一次
-	// beego.Info(dao.GetRedisPool() == dao.GetRedisPool())
 
 	p.RespResult(util.SUCCESS, util.SUCCESS_MSG, person)
 }
