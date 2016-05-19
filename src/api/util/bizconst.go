@@ -21,4 +21,13 @@ const (
 
 	GET_DB_ERRCODE = 10002
 	GET_DB_ERRMSG  = "DB连接异常"
+
+	REQUEST_TIMEOUT_ERRCODE = 10003
+	REQUEST_TIMEOUT_ERRMSG  = "请求超时"
+)
+
+//配置常量
+const (
+	//请求时长
+	MAX_REQUEST_INTERVAL = 10
 )
