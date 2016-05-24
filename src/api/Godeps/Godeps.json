@@ -55,6 +55,18 @@
 			"ImportPath": "github.com/go-sql-driver/mysql",
 			"Comment": "v1.2-194-g7ebe0a5",
 			"Rev": "7ebe0a500653eeb1859664bed5e48dec1e164e73"
+		},
+		{
+			"ImportPath": "github.com/microcosm-cc/bluemonday",
+			"Rev": "4ac6f27528d0a3f2a59e0b0a6f6b3ff0bb89fe20"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "0c607074acd38c5f23d1344dfe74c977464d1257"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "0c607074acd38c5f23d1344dfe74c977464d1257"
 		}
 	]
 }

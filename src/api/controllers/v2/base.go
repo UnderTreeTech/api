@@ -4,6 +4,7 @@ import (
 	"api/config"
 	"api/dao"
 	"api/util"
+	"api/util/xss"
 	"github.com/astaxie/beego"
 	"sort"
 	"strconv"
@@ -21,6 +22,8 @@ type BaseController struct {
 // It's used for request param valid and check
 func (b *BaseController) Prepare() {
 	b.requestParams = b.params()
+	b.cleanXss()
+	beego.Error(b.requestParams)
 	b.validParam()
 	b.validRequest()
 	b.validToken()
@@ -40,6 +43,14 @@ func (b *BaseController) params() (params map[string]string) {
 	}
 
 	return params
+}
+
+//clean xss attack
+func (b *BaseController) cleanXss() {
+	for paramName, paramVal := range b.requestParams {
+		cleanedVal := xss.GetXssHandler().Sanitize(paramVal)
+		b.requestParams[paramName] = cleanedVal
+	}
 }
 
 //校验必须参数

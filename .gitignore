@@ -2,6 +2,7 @@
 bin/*
 pkg/*
 src/api/api
+src/api/conf/*
 src/api/dump.rdb
 *.log
 *.pprof

@@ -5,6 +5,7 @@ import (
 	_ "api/dao"
 	_ "api/docs"
 	_ "api/routers"
+	_ "api/util/xss"
 
 	"github.com/astaxie/beego"
 )
